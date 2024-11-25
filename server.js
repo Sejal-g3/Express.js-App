@@ -235,6 +235,10 @@ app.put('/collections/lessons/:id', async function(req, res, next) {
     }
 });
 
+app.get("/", (req, res) => {
+    res.send("Welcome to our homepage!");
+});
+
 // Middleware to display error if something went wrong
 app.use((err, req, res, next) => {
     console.error('Global error handler:', err);
@@ -242,7 +246,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/collections/lessons`);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}/collections/lessons`);
 });
