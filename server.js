@@ -184,6 +184,57 @@ app.get('/search', async function(req, res, next) {
     }
 });
 
+// To handle the order creation
+app.post('/orders', async function(req, res, next) {
+    try {
+        const orderDetails = req.body;  // Get the order data sent from the frontend
+
+        // Insert the order data into MongoDB's 'orders' collection
+        const result = await db1.collection('orders').insertOne(orderDetails);
+
+        // Check if the insertion was successful
+        if (result.acknowledged) {
+            console.log('Order saved:', result.insertedId);
+            res.status(201).json({ message: 'Order placed successfully!', orderId: result.insertedId });
+        } else {
+            throw new Error('Failed to save order');
+        }
+    } catch (err) {
+        console.error('Error saving order:', err);
+        res.status(500).json({ error: 'Unable to place the order. Please try again.' });
+    }
+});
+
+// Update lesson spaces (availability)
+app.put('/collections/lessons/:id', async function(req, res, next) {
+    try {
+        const lessonId = req.params.id;  // Get the lesson ID from the URL
+        const updatedSpaces = req.body.spaces;  // Get the new spaces value from the request body
+
+        // Ensure the spaces value is provided and is a number
+        if (typeof updatedSpaces !== 'number') {
+            return res.status(400).json({ error: 'Invalid spaces value. Must be a number.' });
+        }
+
+        // Find the lesson by its ID and update the spaces field
+        const result = await req.collection.updateOne(
+            { _id: new ObjectId(lessonId) }, // Find the lesson by ID
+            { $set: { spaces: updatedSpaces } } // Update the spaces field
+        );
+
+        // Check if a document was updated
+        if (result.matchedCount === 1) {
+            console.log(`Lesson spaces updated for ID: ${lessonId}`);
+            res.json({ message: 'Lesson spaces updated successfully!' });
+        } else {
+            res.status(404).json({ error: 'Lesson not found' });
+        }
+    } catch (err) {
+        console.error('Error updating lesson spaces:', err);
+        res.status(500).json({ error: 'Failed to update lesson spaces' });
+    }
+});
+
 // Middleware to display error if something went wrong
 app.use((err, req, res, next) => {
     console.error('Global error handler:', err);
