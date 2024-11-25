@@ -38,7 +38,7 @@ const uri = `${dbPrefix}${dbUser}:${dbPassword}${dbHost}${dbParams}`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 
-let db1;//declare variable
+let db1;
 
 async function connectDB() {
     try {
@@ -50,16 +50,17 @@ async function connectDB() {
     }
 }
 
-connectDB(); //call the connectDB function to connect to MongoDB database
+connectDB();
 
+// Middleware 3: Get the collection name
 app.param('collectionName', async function(req, res, next, collectionName) { 
     req.collection = db1.collection(collectionName);
-    /*Check the collection name for debugging if error */
+    // Check the collection name for debugging if error
     console.log('Middleware set collection:', req.collection.collectionName);
     next();
 });
 
-// Get all data from our collection in Mongodb
+// Middleware 4: Get all data from our collection in Mongodb
 app.get('/collections/:collectionName', async function(req, res, next) {
     try{
         const results = await req.collection.find({}).toArray();
@@ -72,7 +73,7 @@ app.get('/collections/:collectionName', async function(req, res, next) {
     }
 });
 
-// Get specific data
+// Middleware 5: Get specific data
 app.get('/collections1/:collectionName', async function(req, res, next) {
     try{
         const results = await req.collection.find({}, {limit:3, sort: {price:-1}}).toArray(); //find and option, 3 products and price is in descending order
@@ -85,7 +86,7 @@ app.get('/collections1/:collectionName', async function(req, res, next) {
     }
 });
 
-// Get the sorted data
+// Middleware 6: Get the sorted data
 app.get('/collections/:collectionName/:max/:sortAspect/:sortAscDesc', async function(req, res, next){
     try{
         // Validate params
@@ -105,7 +106,7 @@ app.get('/collections/:collectionName/:max/:sortAspect/:sortAscDesc', async func
     }
 });
 
-// Get lesson by id
+// Middleware 7: Get lesson by id
 app.get('/collections/:collectionName/:id' , async function(req, res, next) {
     try{
         const results = await req.collection.findOne({_id:new ObjectId(req.params.id)});
@@ -118,7 +119,7 @@ app.get('/collections/:collectionName/:id' , async function(req, res, next) {
     }
 });
 
-// Add new lesson
+// Middleware 8: Add new lesson
 app.post('/collections/:collectionName', async function(req, res, next) {
     try{
         console.log('Received Request: ', req.body);
@@ -132,7 +133,7 @@ app.post('/collections/:collectionName', async function(req, res, next) {
     }  
 });
 
-// Delete a lesson
+// Middleware 9: Delete a lesson
 app.delete('/collections/:collectionName/:id', async function(req, res, next) {
     try{
         console.log('Received Request: ', req.params.id);
@@ -146,7 +147,7 @@ app.delete('/collections/:collectionName/:id', async function(req, res, next) {
     }
 });
 
-// Update a lesson
+// Middleware 10: Update a lesson
 app.put('/collections/:collectionName/:id', async function(req, res, next) {
     try{
         console.log('Received Request: ', req.params.id);
@@ -162,7 +163,7 @@ app.put('/collections/:collectionName/:id', async function(req, res, next) {
     }
 });
 
-// To handle search
+// Middleware 11: To handle search
 app.get('/search', async function(req, res, next) {
     try{
         const searchTerm = req.query.q?.toLowerCase() || '';
@@ -184,7 +185,7 @@ app.get('/search', async function(req, res, next) {
     }
 });
 
-// To handle the order creation
+// Middleware 12: To handle the order creation
 app.post('/orders', async function(req, res, next) {
     try {
         const orderDetails = req.body;  // Get the order data sent from the frontend
@@ -205,7 +206,7 @@ app.post('/orders', async function(req, res, next) {
     }
 });
 
-// Update lesson spaces (availability)
+// Middleware 13: Update lesson spaces (availability)
 app.put('/collections/lessons/:id', async function(req, res, next) {
     try {
         const lessonId = req.params.id;  // Get the lesson ID from the URL
@@ -239,7 +240,7 @@ app.get("/", (req, res) => {
     res.send("Welcome to our homepage!");
 });
 
-// Middleware to display error if something went wrong
+// Middleware 14: To display error if something went wrong
 app.use((err, req, res, next) => {
     console.error('Global error handler:', err);
     res.status(500).json({ error: 'An error occurred' });
