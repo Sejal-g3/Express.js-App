@@ -184,7 +184,7 @@ app.get('/search', async function(req, res, next) {
     }
 });
 
-// Display error
+// Middleware to display error if something went wrong
 app.use((err, req, res, next) => {
     console.error('Global error handler:', err);
     res.status(500).json({ error: 'An error occurred' });
