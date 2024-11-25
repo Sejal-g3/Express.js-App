@@ -32,13 +32,13 @@ const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 let db1;//declare variable
 
 async function connectDB() {
-  try {
-    client.connect();
-    console.log('Connected to MongoDB');
-    db1 = client.db('AfterSchoolClasses');
-  } catch (err) {
-    console.error('MongoDB connection error:', err);
-  }
+    try {
+        client.connect();
+        console.log('Connected to MongoDB');
+        db1 = client.db('AfterSchoolClasses');
+    } catch (err) {
+        console.error('MongoDB connection error:', err);
+    }
 }
 
 connectDB(); //call the connectDB function to connect to MongoDB database
@@ -53,60 +53,60 @@ app.param('collectionName', async function(req, res, next, collectionName) {
 // Get all data from our collection in Mongodb
 app.get('/collections/:collectionName', async function(req, res, next) {
     try{
-      const results = await req.collection.find({}).toArray();
-      console.log('Retrieved data:', results);
-      res.json(results);
+        const results = await req.collection.find({}).toArray();
+        console.log('Retrieved data:', results);
+        res.json(results);
     }
     catch(err){
-      console.error('Error fetching docs', err.message);
-      next(err);
+        console.error('Error fetching docs', err.message);
+        next(err);
     }
 });
 
 // Get specific data
 app.get('/collections1/:collectionName', async function(req, res, next) {
-  try{
-    const results = await req.collection.find({}, {limit:3, sort: {price:-1}}).toArray(); //find and option, 3 products and price is in descending order
-    console.log('Retrieved data:', results);
-    res.json(results);
-  }
-  catch(err){
-    console.error('Error fetching docs', err.message);
-    next(err);
-  }
+    try{
+        const results = await req.collection.find({}, {limit:3, sort: {price:-1}}).toArray(); //find and option, 3 products and price is in descending order
+        console.log('Retrieved data:', results);
+        res.json(results);
+    }
+    catch(err){
+        console.error('Error fetching docs', err.message);
+        next(err);
+    }
 });
 
 // Get the sorted data
 app.get('/collections/:collectionName/:max/:sortAspect/:sortAscDesc', async function(req, res, next){
-  try{
-    // Validate params
-    var max = parseInt(req.params.max, 10); // base 10
-    let sortDirection = 1;
-    if (req.params.sortAscDesc === "desc") {
-      sortDirection = -1;
-    }
+    try{
+        // Validate params
+        var max = parseInt(req.params.max, 10); // base 10
+        let sortDirection = 1;
+        if (req.params.sortAscDesc === "desc") {
+            sortDirection = -1;
+        }
 
-    const results = await req.collection.find({}, {limit:max, sort: {[req.params.sortAspect]: sortDirection}}).toArray();
-    console.log('Retrieved data:', results);
-    res.json(results);
-  }
-  catch(err){
-    console.error('Error fetching docs', err.message);
-    next(err);
-  }
+        const results = await req.collection.find({}, {limit:max, sort: {[req.params.sortAspect]: sortDirection}}).toArray();
+        console.log('Retrieved data:', results);
+        res.json(results);
+    }
+    catch(err){
+        console.error('Error fetching docs', err.message);
+        next(err);
+    }
 });
 
 // Get lesson by id
 app.get('/collections/:collectionName/:id' , async function(req, res, next) {
-  try{
-    const results = await req.collection.findOne({_id:new ObjectId(req.params.id)});
-    console.log('Retrieved data:', results);
-    res.json(results);
-  }
-  catch(err){
-    console.error('Error fetching docs', err.message);
-    next(err);
-  }
+    try{
+        const results = await req.collection.findOne({_id:new ObjectId(req.params.id)});
+        console.log('Retrieved data:', results);
+        res.json(results);
+    }
+    catch(err){
+        console.error('Error fetching docs', err.message);
+        next(err);
+    }
 });
 
 // Add new lesson
@@ -130,11 +130,11 @@ app.delete('/collections/:collectionName/:id', async function(req, res, next) {
         const results = await req.collection.deleteOne({_id:new ObjectId(req.params.id)});
         console.log('Deleted data:', results);
         res.json((results.deletedCount === 1) ? {msg:"success"}:{msg:"error"});
-      }
-      catch(err){
+    }
+    catch(err){
         console.error('Error fetching docs', err.message);
         next(err);
-      }
+    }
 });
 
 // Update a lesson
@@ -146,11 +146,11 @@ app.put('/collections/:collectionName/:id', async function(req, res, next) {
         );
         console.log('Updated data:', results);
         res.json((results.matchedCount === 1) ? {msg:"success"}:{msg:"error"});
-      }
-      catch(err){
+    }
+    catch(err){
         console.error('Error fetching docs', err.message);
         next(err);
-      }
+    }
 });
 
 // Display error
@@ -159,13 +159,8 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'An error occurred' });
 });
 
-// // Start the server
-// const PORT = 3000;
-// app.listen(PORT, () => {
-//     console.log(`Server running at http://localhost:${PORT}/collections/lessons`);
-// });
-
 // Start the server
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}/collections/lessons`);
 });
