@@ -176,7 +176,7 @@ app.get('/search', async function(req, res, next) {
                 { price: { $regex: searchTerm, $options: 'i' } },
                 { availability: { $regex: searchTerm, $options: 'i' } },
             ]
-        }).toArray;
+        }).toArray();
         res.json(filteredLessons);
     }
     catch(err){
@@ -210,6 +210,9 @@ app.post('/orders', async function(req, res, next) {
 app.put('/collections/lessons/:id', async function(req, res, next) {
     try {
         const lessonId = req.params.id;  // Get the lesson ID from the URL
+        if (!ObjectId.isValid(lessonId)) {
+            return res.status(400).json({ error: 'Invalid lesson ID format.' });
+        }
         const updatedSpaces = req.body.spaces;  // Get the new spaces value from the request body
 
         // Ensure the spaces value is provided and is a number
